@@ -26,6 +26,7 @@ module.exports = function(grunt) {
                     'src/init.js',
                     'src/tags-input.js',
                     'src/auto-complete.js',
+                    'src/auto-complete-match.js',
                     'src/transclude-append.js',
                     'src/autosize.js',
                     'src/bind-attrs.js',

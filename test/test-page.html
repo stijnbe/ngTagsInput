@@ -19,29 +19,34 @@
     }
   </style>
 </head>
-<body ng-controller="Ctrl">
-    <tags-input ng-model="tags" add-on-blur="false" ng-focus="focus()" ng-blur="blur()" add-on-paste="true" paste-split-pattern="[,;|]" spellcheck="false">
-        <auto-complete source="loadItems($query)" load-on-down-arrow="true"></auto-complete>
-    </tags-input>
 
-    <div class="stats" angular-stats watch-count=".watch-count" digest-length=".digest-length">
-      $watch : <span class="watch-count"></span><br />
-      $digest: <span class="digest-length"></span>ms
-    </div>
+<body ng-controller="Ctrl">
+  <tags-input ng-model="tags" add-on-blur="false" ng-focus="focus()" ng-blur="blur()" add-on-paste="true" paste-split-pattern="[,;|]" spellcheck="false">
+      <auto-complete source="loadItems($query)" load-on-down-arrow="true" template="inline-template"></auto-complete>
+  </tags-input>
+
+  <script type="text/ng-template" id="inline-template">
+    <span>{{data.id}}</span>&dash;<span ng-bind-html="util.highlight(data.text)"></span>
+  </script>
+
+  <div class="stats" angular-stats watch-count=".watch-count" digest-length=".digest-length">
+    $watch : <span class="watch-count"></span><br />
+    $digest: <span class="digest-length"></span>ms
+  </div>
 
   <script type="text/javascript">
     angular.module('app', ['ngTagsInput', 'angularStats'])
         .controller('Ctrl', function($scope, $q) {
             var superheroes = [
-              { text: 'Batman <bruce@wayne.com>' },
-              { text: 'Superman' },
-              { text: 'Flash' },
-              { text: 'Iron Man' },
-              { text: 'Hulk' },
-              { text: 'Wolverine' },
-              { text: 'Green Lantern' },
-              { text: 'Green Arrow' },
-              { text: 'Spiderman'}
+              { text: 'Batman <bruce@wayne.com>', id: 1 },
+              { text: 'Superman', id: 2 },
+              { text: 'Flash', id: 3 },
+              { text: 'Iron Man', id: 4 },
+              { text: 'Hulk', id: 5 },
+              { text: 'Wolverine', id: 6 },
+              { text: 'Green Lantern', id: 7 },
+              { text: 'Green Arrow', id: 8 },
+              { text: 'Spiderman', id: 9 }
             ];
 
             $scope.tags = [{ text: 'Batman' }, { text: 'Superman' }, { text:'Flash' }];

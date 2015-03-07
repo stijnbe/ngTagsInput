@@ -94,7 +94,7 @@ describe('autoComplete directive', function() {
     }
 
     function getSuggestionText(index) {
-        return getSuggestion(index).html();
+        return getSuggestion(index).find('ti-autocomplete-match > ng-include > span').html();
     }
 
     function isSuggestionsBoxVisible() {
@@ -1086,6 +1086,75 @@ describe('autoComplete directive', function() {
             expect(getSuggestion(1)).not.toHaveClass('selected');
             expect(getSuggestion(2)).not.toHaveClass('selected');
 
+        });
+    });
+
+    describe('template option', function() {
+        var $templateCache;
+
+        function getSuggestionContent(index) {
+            return getSuggestion(index)
+                .find('ti-autocomplete-match > ng-include')
+                .children()
+                .removeAttr('class')
+                .parent()
+                .html();
+        }
+
+        function getSuggestionScope(index) {
+            return getSuggestion(index)
+                .find('ti-autocomplete-match > ng-include')
+
+                .isolateScope();
+        }
+
+        beforeEach(function() {
+            inject(function(_$templateCache_) {
+                $templateCache = _$templateCache_;
+            });
+        });
+
+        it('initializes the option to ngTagsInput/auto-complete-match.html', function() {
+            // Arrange/Act
+            compile();
+
+            // Assert
+            expect(isolateScope.options.template).toBe('ngTagsInput/auto-complete-match.html');
+        });
+
+        it('loads and uses the provided template', function() {
+            // Arrange
+            $templateCache.put('customTemplate', '<span>{{data.id}}</span><span>{{data.text}}</span>');
+            compile('template="customTemplate"');
+
+            // Act
+            loadSuggestions([
+                { id: 1, text: 'Item1' },
+                { id: 2, text: 'Item2' },
+                { id: 3, text: 'Item3' }
+            ]);
+
+            // Assert
+            expect(getSuggestionContent(0)).toBe('<span>1</span><span>Item1</span>');
+            expect(getSuggestionContent(1)).toBe('<span>2</span><span>Item2</span>');
+            expect(getSuggestionContent(2)).toBe('<span>3</span><span>Item3</span>');
+        });
+
+        it('makes the correct item available to each match', function() {
+            // Arrange
+            compile();
+
+            // Act
+            loadSuggestions([
+                { id: 1, text: 'Item1', image: 'item1.jpg' },
+                { id: 2, text: 'Item2', image: 'item2.jpg' },
+                { id: 3, text: 'Item3', image: 'item3.jpg' }
+            ]);
+
+            // Assert
+            expect(getSuggestionScope(0).data).toEqual({ id: 1, text: 'Item1', image: 'item1.jpg' });
+            expect(getSuggestionScope(1).data).toEqual({ id: 2, text: 'Item2', image: 'item2.jpg' });
+            expect(getSuggestionScope(2).data).toEqual({ id: 3, text: 'Item3', image: 'item3.jpg' });
         });
     });
 });

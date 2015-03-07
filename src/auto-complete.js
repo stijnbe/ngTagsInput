@@ -107,11 +107,16 @@ tagsInput.directive('autoComplete', function($document, $timeout, $sce, $q, tags
         require: '^tagsInput',
         scope: { source: '&' },
         templateUrl: 'ngTagsInput/auto-complete.html',
+        controller: function() {
+            this.registerAutocompleteMatch = function() {
+            };
+        },
         link: function(scope, element, attrs, tagsInputCtrl) {
             var hotkeys = [KEYS.enter, KEYS.tab, KEYS.escape, KEYS.up, KEYS.down],
                 suggestionList, tagsInput, options, getItem, getDisplayText, shouldLoadSuggestions;
 
             tagsInputConfig.load('autoComplete', scope, attrs, {
+                template: [String, 'ngTagsInput/auto-complete-match.html'],
                 debounceDelay: [Number, 100],
                 minLength: [Number, 3],
                 highlightMatchedText: [Boolean, true],
