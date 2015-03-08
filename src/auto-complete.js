@@ -27,6 +27,7 @@
  *                                       gains focus. The current input value is available as $query.
  * @param {boolean=} [selectFirstMatch=true] Flag indicating that the first match will be automatically selected once
  *                                           the suggestion list is shown.
+ * @param {string=} [template=] URL or id of a custom template.
  */
 tagsInput.directive('autoComplete', function($document, $timeout, $sce, $q, tagsInputConfig, tiUtil) {
     function SuggestionList(loadFn, options) {
@@ -107,15 +108,8 @@ tagsInput.directive('autoComplete', function($document, $timeout, $sce, $q, tags
         require: '^tagsInput',
         scope: { source: '&' },
         templateUrl: 'ngTagsInput/auto-complete.html',
-        controller: function() {
-            this.registerAutocompleteMatch = function() {
-            };
-        },
-        link: function(scope, element, attrs, tagsInputCtrl) {
-            var hotkeys = [KEYS.enter, KEYS.tab, KEYS.escape, KEYS.up, KEYS.down],
-                suggestionList, tagsInput, options, getItem, getDisplayText, shouldLoadSuggestions;
-
-            tagsInputConfig.load('autoComplete', scope, attrs, {
+        controller: function($scope, $attrs) {
+            tagsInputConfig.load('autoComplete', $scope, $attrs, {
                 template: [String, 'ngTagsInput/auto-complete-match.html'],
                 debounceDelay: [Number, 100],
                 minLength: [Number, 3],
@@ -127,20 +121,27 @@ tagsInput.directive('autoComplete', function($document, $timeout, $sce, $q, tags
                 selectFirstMatch: [Boolean, true]
             });
 
-            options = scope.options;
+            $scope.suggestionList = new SuggestionList($scope.source, $scope.options);
 
-            tagsInput = tagsInputCtrl.registerAutocomplete();
+            this.registerAutocompleteMatch = function() {
+                return {
+                    getOptions: function() {
+                        return $scope.options;
+                    },
+                    getQuery: function() {
+                        return $scope.suggestionList.query;
+                    }
+                };
+            };
+        },
+        link: function(scope, element, attrs, tagsInputCtrl) {
+            var hotkeys = [KEYS.enter, KEYS.tab, KEYS.escape, KEYS.up, KEYS.down],
+                suggestionList = scope.suggestionList,
+                tagsInput = tagsInputCtrl.registerAutocomplete(),
+                options = scope.options,
+                shouldLoadSuggestions;
+
             options.tagsInput = tagsInput.getOptions();
-
-            suggestionList = new SuggestionList(scope.source, options);
-
-            getItem = function(item) {
-                return item[options.tagsInput.displayProperty];
-            };
-
-            getDisplayText = function(item) {
-                return tiUtil.safeToString(getItem(item));
-            };
 
             shouldLoadSuggestions = function(value) {
                 return value && value.length >= options.minLength || !value && options.loadOnEmpty;
@@ -166,17 +167,8 @@ tagsInput.directive('autoComplete', function($document, $timeout, $sce, $q, tags
                 return added;
             };
 
-            scope.highlight = function(item) {
-                var text = getDisplayText(item);
-                text = tiUtil.encodeHTML(text);
-                if (options.highlightMatchedText) {
-                    text = tiUtil.safeHighlight(text, tiUtil.encodeHTML(suggestionList.query));
-                }
-                return $sce.trustAsHtml(text);
-            };
-
             scope.track = function(item) {
-                return getItem(item);
+                return item[options.tagsInput.displayProperty];
             };
 
             tagsInput

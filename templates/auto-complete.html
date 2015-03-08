@@ -5,7 +5,7 @@
         ng-class="{selected: item == suggestionList.selected}"
         ng-click="addSuggestionByIndex($index)"
         ng-mouseenter="suggestionList.select($index)">
-      <ti-autocomplete-match template="{{options.template}}" data="item" query="suggestionList.query" highlight="options.highlightMatchedText" display-text="options.tagsInput.displayProperty"></ti-autocomplete-match>
+      <ti-autocomplete-match data="item"></ti-autocomplete-match>
     </li>
   </ul>
 </div>

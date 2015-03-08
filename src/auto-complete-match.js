@@ -13,20 +13,22 @@ tagsInput.directive('tiAutocompleteMatch', function($sce, tiUtil) {
         restrict: 'E',
         require: '^autoComplete',
         template: '<ng-include src="template"></ng-include>',
-        scope: { template: '@', data: '=', query: '=', highlight: '=', displayText: '=' },
-        link: function(scope, element, attrs, autoComplete) {
-           // autoComplete.ping();
+        scope: { data: '=' },
+        link: function(scope, element, attrs, autoCompleteCtrl) {
+            var autoComplete = autoCompleteCtrl.registerAutocompleteMatch(),
+                options = autoComplete.getOptions();
+
+            scope.template = options.template;
+
             scope.util = {
                 highlight: function(text) {
-                    if (scope.highlight) {
-                        text = tiUtil.safeToString(text);
-                        text = tiUtil.encodeHTML(text);
-                        text = tiUtil.safeHighlight(text, tiUtil.encodeHTML(scope.query));
+                    if (options.highlightMatchedText) {
+                        text = tiUtil.safeHighlight(text, autoComplete.getQuery());
                     }
                     return $sce.trustAsHtml(text);
                 },
                 getDisplayText: function() {
-                    return scope.data[scope.displayText];
+                    return tiUtil.safeToString(scope.data[options.tagsInput.displayProperty]);
                 }
             };
         }

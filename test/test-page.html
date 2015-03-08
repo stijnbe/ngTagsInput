@@ -6,6 +6,7 @@
   <script type="text/javascript" src="lib/ng-stats.min.js"></script>
   <script type="text/javascript" src="../build/ng-tags-input.js"></script>
   <link rel="stylesheet" href="../build/ng-tags-input.css"/>
+
   <style>
     .stats {
       position: fixed;
@@ -26,7 +27,7 @@
   </tags-input>
 
   <script type="text/ng-template" id="inline-template">
-    <span>{{data.id}}</span>&dash;<span ng-bind-html="util.highlight(data.text)"></span>
+    <img ng-src="{{data.picture}}" width="64" height="64"/><span ng-bind-html="util.highlight(data.text)"></span>
   </script>
 
   <div class="stats" angular-stats watch-count=".watch-count" digest-length=".digest-length">
@@ -38,18 +39,14 @@
     angular.module('app', ['ngTagsInput', 'angularStats'])
         .controller('Ctrl', function($scope, $q) {
             var superheroes = [
-              { text: 'Batman <bruce@wayne.com>', id: 1 },
-              { text: 'Superman', id: 2 },
-              { text: 'Flash', id: 3 },
-              { text: 'Iron Man', id: 4 },
-              { text: 'Hulk', id: 5 },
-              { text: 'Wolverine', id: 6 },
-              { text: 'Green Lantern', id: 7 },
-              { text: 'Green Arrow', id: 8 },
-              { text: 'Spiderman', id: 9 }
+              { text: 'Batman', picture: 'http://www.xboxachievements.com/forum/customavatars/avatar393936_1.gif' },
+              { text: 'Superman', picture: 'http://s6047.storage.proboards.com/3246047/a/N03FIKtlEA7eli2Bighw.jpg' },
+              { text: 'Iron Man', picture: 'http://static.planetminecraft.com/files/avatar/1641115_0.jpg' },
+              { text: 'Spiderman', picture: 'http://avatarbox.net/avatars/img30/spider_m_a_n_avatar_picture_39548.jpg' },
+              { text: 'Green Lantern', picture: 'http://www.hcrealms.com/forum/image.php?u=23873&dateline=1332599251' },
             ];
 
-            $scope.tags = [{ text: 'Batman' }, { text: 'Superman' }, { text:'Flash' }];
+            $scope.tags = [{ text: 'Batman' }, { text: 'Superman' }, { text: 'Spiderman' }];
             $scope.placeholder = 'New tag';
             $scope.loadItems = function(query) {
               var deferred = $q.defer();
