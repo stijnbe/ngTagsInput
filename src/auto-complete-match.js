@@ -13,7 +13,7 @@ tagsInput.directive('tiAutocompleteMatch', function($sce, tiUtil) {
         restrict: 'E',
         require: '^autoComplete',
         template: '<ng-include src="template"></ng-include>',
-        scope: { template: '@', data: '=', query: '=', highlight: '=' },
+        scope: { template: '@', data: '=', query: '=', highlight: '=', displayText: '=' },
         link: function(scope, element, attrs, autoComplete) {
            // autoComplete.ping();
             scope.util = {
@@ -24,6 +24,9 @@ tagsInput.directive('tiAutocompleteMatch', function($sce, tiUtil) {
                         text = tiUtil.safeHighlight(text, tiUtil.encodeHTML(scope.query));
                     }
                     return $sce.trustAsHtml(text);
+                },
+                getDisplayText: function() {
+                    return scope.data[scope.displayText];
                 }
             };
         }

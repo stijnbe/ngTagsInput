@@ -26,12 +26,6 @@ describe('autoComplete directive', function() {
         };
         $scope.loadItems = jasmine.createSpy().and.returnValue(deferred.promise);
 
-        compile();
-    });
-
-    function compile() {
-        var parent, options;
-
         tagsInput = {
             changeInputValue: jasmine.createSpy(),
             addTag: jasmine.createSpy(),
@@ -46,6 +40,12 @@ describe('autoComplete directive', function() {
                 displayProperty: 'text'
             })
         };
+
+        compile();
+    });
+
+    function compile() {
+        var parent, options;
 
         parent = $compile('<tags-input ng-model="whatever"></tags-input>')($scope);
         $scope.$digest();
@@ -179,6 +179,25 @@ describe('autoComplete directive', function() {
             expect(getSuggestions().length).toBe(2);
             expect(getSuggestionText(0)).toBe('Item1');
             expect(getSuggestionText(1)).toBe('Item2');
+        });
+
+        it('renders all elements returned by the load function using the provided display-property option', function() {
+            // Arrange
+            tagsInput.getOptions.and.returnValue({ displayProperty: 'label' });
+            compile();
+
+            // Act
+            loadSuggestions([
+                { label: 'Item1' },
+                { label: 'Item2' },
+                { label: 'Item3' },
+            ]);
+
+            // Assert
+            expect(getSuggestions().length).toBe(3);
+            expect(getSuggestionText(0)).toBe('Item1');
+            expect(getSuggestionText(1)).toBe('Item2');
+            expect(getSuggestionText(2)).toBe('Item3');
         });
 
         it('shows the suggestions list when there are items to show', function() {
@@ -1104,8 +1123,8 @@ describe('autoComplete directive', function() {
         function getSuggestionScope(index) {
             return getSuggestion(index)
                 .find('ti-autocomplete-match > ng-include')
-
-                .isolateScope();
+                .children()
+                .scope();
         }
 
         beforeEach(function() {
@@ -1140,7 +1159,7 @@ describe('autoComplete directive', function() {
             expect(getSuggestionContent(2)).toBe('<span>3</span><span>Item3</span>');
         });
 
-        it('makes the correct item available to each match', function() {
+        it('makes the match data available to the template', function() {
             // Arrange
             compile();
 
@@ -1155,6 +1174,24 @@ describe('autoComplete directive', function() {
             expect(getSuggestionScope(0).data).toEqual({ id: 1, text: 'Item1', image: 'item1.jpg' });
             expect(getSuggestionScope(1).data).toEqual({ id: 2, text: 'Item2', image: 'item2.jpg' });
             expect(getSuggestionScope(2).data).toEqual({ id: 3, text: 'Item3', image: 'item3.jpg' });
+        });
+
+        it('makes the util object available to the template', function() {
+            // Arrange
+            compile();
+
+            // Act
+            loadSuggestions([
+                { text: 'Item1' },
+                { text: 'Item2' },
+                { text: 'Item3' }
+            ]);
+
+            // Assert
+            var utilObj = { highlight: jasmine.any(Function), getDisplayText: jasmine.any(Function) };
+            expect(getSuggestionScope(0).util).toEqual(utilObj);
+            expect(getSuggestionScope(1).util).toEqual(utilObj);
+            expect(getSuggestionScope(2).util).toEqual(utilObj);
         });
     });
 });
