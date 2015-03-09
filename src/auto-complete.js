@@ -147,8 +147,6 @@ tagsInput.directive('autoComplete', function($document, $timeout, $sce, $q, tags
                 return value && value.length >= options.minLength || !value && options.loadOnEmpty;
             };
 
-            scope.suggestionList = suggestionList;
-
             scope.addSuggestionByIndex = function(index) {
                 suggestionList.select(index);
                 scope.addSuggestion();

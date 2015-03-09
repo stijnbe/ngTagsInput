@@ -49,7 +49,7 @@ module.exports = function(grunt) {
                 }
             },
             html: {
-                src: ['templates/tags-input.html', 'templates/auto-complete.html'],
+                src: ['templates/tags-input.html', 'templates/auto-complete.html', 'templates/auto-complete-match.html'],
                 out: 'tmp/templates.js'
             },
             zip: {
