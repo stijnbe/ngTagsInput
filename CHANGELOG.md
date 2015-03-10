@@ -1,5 +1,7 @@
 ## 2.3.0 (2015-03-10)
 
+## 2.3.0 (2015-03-10)
+
 #### Features
 
 * **tagsInput:** Add onTagAdding/onTagRemoving callbacks ([c4ceed54](https://github.com/mbenford/ngTagsInput/commit/c4ceed546b30cb6f2052de6b5edcf0f759803ef7), [#100](https://github.com/mbenford/ngTagsInput/issues/100))
